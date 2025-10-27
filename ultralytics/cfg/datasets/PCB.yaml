@@ -1,0 +1,12 @@
+path: E:\\Communication_Innovation_and_Entrepreneurship_Project\\PCB\\PCB_DATASET_YOLO # dataset root dir
+train: images/train2017 # train images (relative to 'path') 4 images
+val: images/val2017 # val images (relative to 'path') 4 images
+
+# Classes for DOTA 1.0
+names:
+  0: missing_hole
+  1: mouse_bite
+  2: open_circuit
+  3: short
+  4: spur
+  5: spurious_copper
