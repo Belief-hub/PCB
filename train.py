@@ -1,10 +1,9 @@
 from ultralytics import YOLO
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Load a model
     # model = YOLO("yolo11s.yaml")  # build a new model from scratch
     model = YOLO("yolo11s.pt")  # load a pretrained model (recommended for training)
-
 
     # Use the model
     model.train(data="PCB.yaml", imgsz=640, batch=16, workers=8, cache=True, epochs=100)  # train the model
