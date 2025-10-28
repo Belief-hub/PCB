@@ -5,17 +5,15 @@ import sys
 
 
 def check_dependencies():
-    """检查依赖包是否安装"""
-    required_packages = [
-        'flask', 'cv2', 'numpy', 'onnxruntime', 'PIL'
-    ]
+    """检查依赖包是否安装."""
+    required_packages = ["flask", "cv2", "numpy", "onnxruntime", "PIL"]
 
     missing_packages = []
     for package in required_packages:
         try:
-            if package == 'cv2':
+            if package == "cv2":
                 import cv2
-            elif package == 'PIL':
+            elif package == "PIL":
                 from PIL import Image
             else:
                 __import__(package)
@@ -26,8 +24,8 @@ def check_dependencies():
 
 
 def check_model_file():
-    """检查模型文件是否存在"""
-    model_path = r'E:\Communication_Innovation_and_Entrepreneurship_Project\PCB\runs\detect\train\weights\best.onnx'
+    """检查模型文件是否存在."""
+    model_path = r"E:\Communication_Innovation_and_Entrepreneurship_Project\PCB\runs\detect\train\weights\best.onnx"
     if not os.path.exists(model_path):
         print(f"模型文件不存在: {model_path}")
         print("请确保已训练好模型并导出为ONNX格式")
@@ -57,9 +55,10 @@ def main():
 
     # 启动Flask应用
     from app import app, init_model
+
     init_model()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
