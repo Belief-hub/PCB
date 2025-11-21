@@ -230,6 +230,12 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/batch')
+def batch_page():
+    """批量上传页面"""
+    return render_template('batch.html')
+
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     """处理文件上传和检测"""

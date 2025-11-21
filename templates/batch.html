@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCB缺陷检测系统</title>
+    <title>批量检测 - PCB缺陷检测系统</title>
     <style>
         * {
             margin: 0;
@@ -21,7 +21,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
@@ -32,7 +32,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             padding: 40px 30px;
             text-align: center;
@@ -74,6 +74,28 @@
             z-index: 1;
         }
 
+        .nav-links {
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
         .main-content {
             padding: 40px;
             background: rgba(255, 255, 255, 0.5);
@@ -84,17 +106,17 @@
             border-radius: 16px;
             padding: 30px;
             margin-bottom: 30px;
-            border: 2px dashed rgba(59, 130, 246, 0.3);
+            border: 2px dashed rgba(16, 185, 129, 0.3);
             transition: all 0.4s ease;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
         .upload-section:hover {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.05);
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.15);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);
         }
 
         .upload-area {
@@ -104,9 +126,9 @@
 
         .upload-icon {
             font-size: 4em;
-            color: #3b82f6;
+            color: #10b981;
             margin-bottom: 20px;
-            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3));
+            filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.3));
         }
 
         .file-input {
@@ -114,7 +136,7 @@
         }
 
         .upload-btn {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             padding: 16px 32px;
             border: none;
@@ -123,7 +145,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -145,7 +167,7 @@
 
         .upload-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
         }
 
         .file-info {
@@ -153,6 +175,40 @@
             color: #64748b;
             font-size: 0.9em;
             font-weight: 400;
+        }
+
+        .file-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .file-item {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-name {
+            flex: 1;
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .file-size {
+            color: #64748b;
+            font-size: 0.9em;
+            margin-left: 10px;
         }
 
         .parameters {
@@ -174,7 +230,7 @@
 
         .param-group:hover {
             background: rgba(255, 255, 255, 0.9);
-            border-color: rgba(59, 130, 246, 0.3);
+            border-color: rgba(16, 185, 129, 0.3);
             transform: translateY(-2px);
         }
 
@@ -201,17 +257,13 @@
 
         .param-group input:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: #10b981;
             background: rgba(255, 255, 255, 1);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .param-group input::placeholder {
-            color: #94a3b8;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
         .detect-btn {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             padding: 18px 40px;
             border: none;
@@ -220,7 +272,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
             width: 100%;
             margin-bottom: 30px;
             position: relative;
@@ -245,7 +297,7 @@
 
         .detect-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.4);
         }
 
         .detect-btn:disabled {
@@ -269,13 +321,13 @@
 
         .spinner {
             border: 3px solid rgba(226, 232, 240, 0.8);
-            border-top: 3px solid #3b82f6;
+            border-top: 3px solid #10b981;
             border-radius: 50%;
             width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
         }
 
         @keyframes spin {
@@ -338,9 +390,9 @@
         .stat-value {
             font-size: 1.8em;
             font-weight: 700;
-            color: #3b82f6;
+            color: #10b981;
             margin-bottom: 8px;
-            text-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
         }
 
         .stat-label {
@@ -350,81 +402,6 @@
             letter-spacing: 0.02em;
         }
 
-        .detection-list {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .detection-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .detection-item:last-child {
-            border-bottom: none;
-        }
-
-        .detection-class {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .detection-confidence {
-            background: #4facfe;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.9em;
-        }
-
-        .download-btn {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-        }
-
-        .error {
-            background: rgba(239, 68, 68, 0.1);
-            color: #dc2626;
-            padding: 16px 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-            display: none;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            backdrop-filter: blur(10px);
-            font-weight: 500;
-        }
-
-        .success {
-            background: rgba(34, 197, 94, 0.1);
-            color: #16a34a;
-            padding: 16px 20px;
-            border-radius: 12px;
-            margin: 20px 0;
-            display: none;
-            border: 1px solid rgba(34, 197, 94, 0.2);
-            backdrop-filter: blur(10px);
-            font-weight: 500;
-        }
-
-        /* 批量结果网格样式 */
         .batch-results-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -452,7 +429,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #3b82f6, #1d4ed8, #3b82f6);
+            background: linear-gradient(90deg, #10b981, #059669, #10b981);
             background-size: 200% 100%;
             animation: gradient-shift 3s ease-in-out infinite;
         }
@@ -465,8 +442,8 @@
         .result-card:hover {
             transform: translateY(-8px);
             background: rgba(255, 255, 255, 0.9);
-            border-color: rgba(59, 130, 246, 0.3);
-            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
         }
 
         .result-card h4 {
@@ -489,7 +466,7 @@
         }
 
         .result-image-thumbnail:hover {
-            border-color: rgba(59, 130, 246, 0.5);
+            border-color: rgba(16, 185, 129, 0.5);
             transform: scale(1.02);
         }
 
@@ -511,7 +488,7 @@
         }
 
         .detection-details-list li:hover {
-            background: rgba(59, 130, 246, 0.05);
+            background: rgba(16, 185, 129, 0.05);
             padding-left: 8px;
             border-radius: 8px;
         }
@@ -528,8 +505,8 @@
             font-weight: 600;
             font-size: 0.8em;
             margin-right: 12px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
 
         .detection-confidence {
@@ -539,7 +516,7 @@
         }
 
         .download-btn-small {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -550,7 +527,7 @@
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -572,7 +549,7 @@
 
         .download-btn-small:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
         }
 
         .no-detections {
@@ -585,6 +562,155 @@
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 图片放大模态框样式 */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: relative;
+            margin: auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 85vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+
+        .modal-image:hover {
+            transform: scale(1.02);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10001;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-back-btn {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 12px 24px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            z-index: 10001;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .modal-back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .modal-info {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            border-radius: 25px;
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 10001;
+        }
+
+        .result-image-thumbnail {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .result-image-thumbnail:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(16, 185, 129, 0.3);
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: none;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            backdrop-filter: blur(10px);
+            font-weight: 500;
+        }
+
+        .success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: none;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            backdrop-filter: blur(10px);
+            font-weight: 500;
         }
 
         @media (max-width: 768px) {
@@ -625,11 +751,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔍 PCB缺陷检测系统</h1>
-            <p>基于YOLO11的智能PCB缺陷识别平台</p>
-            <div style="margin-top: 20px;">
-                <a href="/" style="color: white; text-decoration: none; margin: 0 15px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; transition: all 0.3s;">单张检测</a>
-                <a href="/batch" style="color: white; text-decoration: none; margin: 0 15px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; transition: all 0.3s;">批量检测</a>
+            <h1>📦 批量PCB缺陷检测</h1>
+            <p>一次上传多张PCB图片，批量进行缺陷检测</p>
+            <div class="nav-links">
+                <a href="/">单张检测</a>
+                <a href="/batch">批量检测</a>
             </div>
         </div>
 
@@ -637,13 +763,14 @@
             <div class="upload-section">
                 <div class="upload-area">
                     <div class="upload-icon">📁</div>
-                    <h3>上传PCB图像（单张检测）</h3>
-                    <p>支持 JPG, PNG, BMP, TIFF 格式，最大16MB<br>选择单张图片进行检测</p>
-                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                    <h3>批量上传PCB图像</h3>
+                    <p>支持 JPG, PNG, BMP, TIFF 格式，最大16MB<br>可同时选择多张图片进行批量检测</p>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*" multiple>
                     <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                        选择文件
+                        选择多张图片
                     </button>
                     <div class="file-info" id="fileInfo"></div>
+                    <div class="file-list" id="fileList" style="display: none;"></div>
                 </div>
             </div>
 
@@ -658,13 +785,13 @@
                 </div>
             </div>
 
-            <button class="detect-btn" id="detectBtn" onclick="detectDefects()">
-                🚀 开始检测
+            <button class="detect-btn" id="detectBtn" onclick="batchDetectDefects()">
+                🚀 开始批量检测
             </button>
 
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p>正在分析图像，请稍候...</p>
+                <p id="loadingText">正在分析图像，请稍候...</p>
             </div>
 
             <div class="error" id="errorMsg"></div>
@@ -672,23 +799,23 @@
 
             <div class="results" id="results">
                 <div class="detection-info">
-                    <h3>检测统计</h3>
+                    <h3>批量检测统计</h3>
                     <div class="detection-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalFiles">0</div>
+                            <div class="stat-label">处理文件数</div>
+                        </div>
                         <div class="stat-item">
                             <div class="stat-value" id="totalDetections">0</div>
                             <div class="stat-label">总检测数</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value" id="preprocessTime">0ms</div>
-                            <div class="stat-label">预处理时间</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="inferenceTime">0ms</div>
-                            <div class="stat-label">推理时间</div>
-                        </div>
-                        <div class="stat-item">
                             <div class="stat-value" id="totalTime">0ms</div>
                             <div class="stat-label">总耗时</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="averageTime">0ms</div>
+                            <div class="stat-label">平均耗时</div>
                         </div>
                     </div>
                 </div>
@@ -700,6 +827,18 @@
         </div>
     </div>
 
+    <!-- 图片放大查看模态框 -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeImageModal()" title="关闭 (ESC)">×</button>
+            <button class="modal-back-btn" onclick="closeImageModal()">
+                <span>←</span> 返回
+            </button>
+            <img id="modalImage" class="modal-image" src="" alt="放大图片">
+            <div class="modal-info" id="modalInfo"></div>
+        </div>
+    </div>
+
     <script>
         let selectedFiles = [];
 
@@ -707,33 +846,27 @@
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const files = Array.from(e.target.files);
             if (files.length > 0) {
-                if (files.length > 1) {
-                    showMessage('error', '单张检测模式只能选择一张图片！已自动选择第一张。');
-                    selectedFiles = [files[0]];
-                } else {
-                    selectedFiles = files;
-                }
-                document.getElementById('fileInfo').textContent = `已选择: ${selectedFiles[0].name} (${(selectedFiles[0].size / 1024 / 1024).toFixed(2)} MB)`;
-                showMessage('success', '文件选择成功！');
+                selectedFiles = files;
+                const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+                document.getElementById('fileInfo').textContent = `已选择 ${files.length} 个文件 (总大小: ${(totalSize / 1024 / 1024).toFixed(2)} MB)`;
+                
+                // 显示文件列表
+                const fileList = document.getElementById('fileList');
+                fileList.style.display = 'block';
+                fileList.innerHTML = '';
+                files.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <span class="file-name">${index + 1}. ${file.name}</span>
+                        <span class="file-size">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                    `;
+                    fileList.appendChild(fileItem);
+                });
+                
+                showMessage('success', `文件选择成功！共选择 ${files.length} 个文件`);
             }
         });
-
-
-        // 检测缺陷（单张检测模式）
-        async function detectDefects() {
-            if (selectedFiles.length === 0) {
-                showMessage('error', '请先选择要检测的图像文件！');
-                return;
-            }
-
-            if (selectedFiles.length > 1) {
-                showMessage('error', '单张检测模式只能选择一张图片！如需批量检测，请前往批量检测页面。');
-                return;
-            }
-
-            // 单文件检测
-            await processSingleFile(selectedFiles[0]);
-        }
 
         // 批量检测缺陷
         async function batchDetectDefects() {
@@ -744,6 +877,7 @@
 
             const detectBtn = document.getElementById('detectBtn');
             const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
             const results = document.getElementById('results');
 
             // 显示加载状态
@@ -761,7 +895,7 @@
             formData.append('iou_threshold', document.getElementById('iouThreshold').value);
 
             try {
-                loading.querySelector('p').textContent = `正在批量处理 ${selectedFiles.length} 个文件...`;
+                loadingText.textContent = `正在批量处理 ${selectedFiles.length} 个文件，请稍候...`;
                 
                 const response = await fetch('/batch_upload', {
                     method: 'POST',
@@ -772,7 +906,7 @@
 
                 if (data.success) {
                     // 显示批量检测结果
-                    displayBatchResults(data.results, data.total_detections, data.total_time);
+                    displayBatchResults(data.results, data.total_files, data.total_detections, data.total_time, data.average_time);
                     showMessage('success', `批量检测完成！共处理 ${data.total_files} 个文件，发现 ${data.total_detections} 个缺陷`);
                 } else {
                     showMessage('error', data.error || '批量检测失败');
@@ -786,84 +920,20 @@
             }
         }
 
-        // 处理单个文件
-        async function processSingleFile(file, showResults = true) {
-            const detectBtn = document.getElementById('detectBtn');
-            const loading = document.getElementById('loading');
-            const results = document.getElementById('results');
-
-            if (showResults) {
-                // 显示加载状态
-                detectBtn.disabled = true;
-                loading.style.display = 'block';
-                results.style.display = 'none';
-                hideMessages();
-            }
-
-            // 准备表单数据
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('conf_threshold', document.getElementById('confThreshold').value);
-            formData.append('iou_threshold', document.getElementById('iouThreshold').value);
-
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    if (showResults) {
-                        displayResults(data);
-                        showMessage('success', `检测完成！共发现 ${data.detection_count} 个缺陷`);
-                    }
-                    return data;
-                } else {
-                    if (showResults) {
-                        showMessage('error', data.error || '检测失败');
-                    }
-                    return null;
-                }
-            } catch (error) {
-                if (showResults) {
-                    showMessage('error', '网络错误：' + error.message);
-                }
-                return null;
-            } finally {
-                if (showResults) {
-                    detectBtn.disabled = false;
-                    loading.style.display = 'none';
-                }
-            }
-        }
-
-        // 显示检测结果（支持单文件和批量）
-        function displayResults(data) {
-            // 将单文件结果转换为批量结果格式
-            displayBatchResults([data], data.detection_count, data.timing.total);
-        }
-
         // 显示批量检测结果
-        function displayBatchResults(allResults, totalDetections, totalTime) {
+        function displayBatchResults(allResults, totalFiles, totalDetections, totalTime, averageTime) {
             const results = document.getElementById('results');
+            const totalFilesEl = document.getElementById('totalFiles');
             const totalDetectionsEl = document.getElementById('totalDetections');
-            const preprocessTime = document.getElementById('preprocessTime');
-            const inferenceTime = document.getElementById('inferenceTime');
             const totalTimeEl = document.getElementById('totalTime');
+            const averageTimeEl = document.getElementById('averageTime');
             const batchResultsContainer = document.getElementById('batchResultsContainer');
 
             // 更新统计信息
+            totalFilesEl.textContent = totalFiles;
             totalDetectionsEl.textContent = totalDetections;
-            if (allResults.length === 1) {
-                preprocessTime.textContent = (allResults[0].timing.preprocess * 1000).toFixed(1) + 'ms';
-                inferenceTime.textContent = (allResults[0].timing.inference * 1000).toFixed(1) + 'ms';
-            } else {
-                preprocessTime.textContent = '批量处理';
-                inferenceTime.textContent = '批量处理';
-            }
             totalTimeEl.textContent = (totalTime * 1000).toFixed(1) + 'ms';
+            averageTimeEl.textContent = (averageTime * 1000).toFixed(1) + 'ms';
 
             // 清空并重新生成结果卡片
             batchResultsContainer.innerHTML = '';
@@ -894,9 +964,10 @@
                     resultCard.innerHTML = `
                         <h4>文件 ${index + 1}: ${result.filename || result.result_filename}</h4>
                         <img src="data:image/jpeg;base64,${result.result_image}" 
-                             alt="检测结果" class="result-image-thumbnail">
+                             alt="检测结果" class="result-image-thumbnail"
+                             onclick="openImageModal('data:image/jpeg;base64,${result.result_image}', '${result.filename || result.result_filename}', ${result.detection_count}, ${result.timing.total})">
                         <div style="margin-bottom: 15px;">
-                            <strong style="color: #4facfe;">检测到 ${result.detection_count} 个缺陷</strong>
+                            <strong style="color: #10b981;">检测到 ${result.detection_count} 个缺陷</strong>
                             <div style="color: #666; font-size: 0.8em; margin-top: 5px;">
                                 处理时间: ${(result.timing.total * 1000).toFixed(1)}ms
                             </div>
@@ -938,6 +1009,46 @@
             document.getElementById('errorMsg').style.display = 'none';
             document.getElementById('successMsg').style.display = 'none';
         }
+
+        // 打开图片放大模态框
+        function openImageModal(imageSrc, filename, detectionCount, processingTime) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalInfo = document.getElementById('modalInfo');
+            
+            modalImage.src = imageSrc;
+            modalInfo.innerHTML = `
+                <strong>${filename}</strong> | 
+                检测到 ${detectionCount} 个缺陷 | 
+                处理时间: ${(processingTime * 1000).toFixed(1)}ms
+            `;
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        }
+
+        // 关闭图片放大模态框
+        function closeImageModal(event) {
+            // 如果点击事件存在且点击的是模态框背景，才关闭
+            if (event && event.target.id !== 'imageModal') {
+                return;
+            }
+            
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // 恢复背景滚动
+        }
+
+        // 键盘事件：按ESC键关闭模态框
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('imageModal');
+                if (modal.style.display === 'block') {
+                    closeImageModal();
+                }
+            }
+        });
     </script>
 </body>
 </html>
+
