@@ -1,39 +1,38 @@
 import argparse
+import os
 import time
+
 import cv2
 import numpy as np
+import onnxruntime as ort  # 使用onnxruntime推理用上，pip install onnxruntime-gpu==1.12.0 -i  https://pypi.tuna.tsinghua.edu.cn/simple，默认安装CPU
 
-import \
-    onnxruntime as ort  # 使用onnxruntime推理用上，pip install onnxruntime-gpu==1.12.0 -i  https://pypi.tuna.tsinghua.edu.cn/simple，默认安装CPU
-import os
-
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 class YOLOv11:
     """YOLOv11 object detection model class for handling inference and visualization."""
 
     def __init__(self, onnx_model, imgsz=(640, 640)):
-        """
-        Initialization.
+        """Initialization.
 
         Args:
             onnx_model (str): Path to the ONNX model.
         """
-
         # 构建onnxruntime推理引擎
-        self.ort_session = ort.InferenceSession(onnx_model,
-                                                providers=['CUDAExecutionProvider', 'CPUExecutionProvider']
-                                                if ort.get_device() == 'GPU' else ['CPUExecutionProvider'])
+        self.ort_session = ort.InferenceSession(
+            onnx_model,
+            providers=["CUDAExecutionProvider", "CPUExecutionProvider"]
+            if ort.get_device() == "GPU"
+            else ["CPUExecutionProvider"],
+        )
         print(ort.get_device())
         # Numpy dtype: support both FP32 and FP16 onnx model
-        self.ndtype = np.half if self.ort_session.get_inputs()[0].type == 'tensor(float16)' else np.single
+        self.ndtype = np.half if self.ort_session.get_inputs()[0].type == "tensor(float16)" else np.single
 
         self.model_height, self.model_width = imgsz[0], imgsz[1]  # 图像resize大小
 
     def __call__(self, im0, conf_threshold=0.4, iou_threshold=0.45):
-        """
-        The whole pipeline: pre-process -> inference -> post-process.
+        """The whole pipeline: pre-process -> inference -> post-process.
 
         Args:
             im0 (Numpy.ndarray): original input image.
@@ -57,14 +56,15 @@ class YOLOv11:
 
         # 后处理Post-process
         t3 = time.time()
-        boxes = self.postprocess(preds,
-                                 im0=im0,
-                                 ratio=ratio,
-                                 pad_w=pad_w,
-                                 pad_h=pad_h,
-                                 conf_threshold=conf_threshold,
-                                 iou_threshold=iou_threshold,
-                                 )
+        boxes = self.postprocess(
+            preds,
+            im0=im0,
+            ratio=ratio,
+            pad_w=pad_w,
+            pad_h=pad_h,
+            conf_threshold=conf_threshold,
+            iou_threshold=iou_threshold,
+        )
         # print('det后处理时间：{:.3f}s'.format(time.time() - t3))
         post_time = round(time.time() - t3, 3)
 
@@ -72,8 +72,7 @@ class YOLOv11:
 
     # 前处理，包括：resize, pad, HWC to CHW，BGR to RGB，归一化，增加维度CHW -> BCHW
     def preprocess(self, img):
-        """
-        Pre-processes the input image.
+        """Pre-processes the input image.
 
         Args:
             img (Numpy.ndarray): image about to be processed.
@@ -89,24 +88,23 @@ class YOLOv11:
         new_shape = (self.model_height, self.model_width)
         r = min(new_shape[0] / shape[0], new_shape[1] / shape[1])
         ratio = r, r
-        new_unpad = int(round(shape[1] * r)), int(round(shape[0] * r))
+        new_unpad = round(shape[1] * r), round(shape[0] * r)
         pad_w, pad_h = (new_shape[1] - new_unpad[0]) / 2, (new_shape[0] - new_unpad[1]) / 2  # wh padding
         if shape[::-1] != new_unpad:  # resize
             img = cv2.resize(img, new_unpad, interpolation=cv2.INTER_LINEAR)
 
-        top, bottom = int(round(pad_h - 0.1)), int(round(pad_h + 0.1))
-        left, right = int(round(pad_w - 0.1)), int(round(pad_w + 0.1))
+        top, bottom = round(pad_h - 0.1), round(pad_h + 0.1)
+        left, right = round(pad_w - 0.1), round(pad_w + 0.1)
         img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=(114, 114, 114))  # 填充
 
         # Transforms: HWC to CHW -> BGR to RGB -> div(255) -> contiguous -> add axis(optional)
-        img = np.ascontiguousarray(np.einsum('HWC->CHW', img)[::-1], dtype=self.ndtype) / 255.0
+        img = np.ascontiguousarray(np.einsum("HWC->CHW", img)[::-1], dtype=self.ndtype) / 255.0
         img_process = img[None] if len(img.shape) == 3 else img
         return img_process, ratio, (pad_w, pad_h)
 
     # 后处理，包括：阈值过滤与NMS
     def postprocess(self, preds, im0, ratio, pad_w, pad_h, conf_threshold, iou_threshold):
-        """
-        Post-process the prediction.
+        """Post-process the prediction.
 
         Args:
             preds (Numpy.ndarray): predictions come from ort.session.run().
@@ -122,7 +120,7 @@ class YOLOv11:
         """
         x = preds  # outputs: predictions (1, 84, 8400)
         # Transpose the first output: (Batch_size, xywh_conf_cls, Num_anchors) -> (Batch_size, Num_anchors, xywh_conf_cls)
-        x = np.einsum('bcn->bnc', x)  # (1, 8400, 84)
+        x = np.einsum("bcn->bnc", x)  # (1, 8400, 84)
 
         # Predictions filtering by conf-threshold
         x = x[np.amax(x[..., 4:], axis=-1) > conf_threshold]
@@ -154,28 +152,42 @@ class YOLOv11:
             return []
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Create an argument parser to handle command-line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--det_model', type=str,
-                        default=r"E:\Communication_Innovation_and_Entrepreneurship_Project\PCB\runs\detect\train\weights\best.onnx",
-                        help='Path to ONNX model')
-    parser.add_argument('--source', type=str, default=str(r"E:\Communication_Innovation_and_Entrepreneurship_Project\PCB\PCB_DATASET_YOLO\images\val2017"),
-                        help='Path to input image')
-    parser.add_argument('--out_path', type=str, default=str(r"E:\Communication_Innovation_and_Entrepreneurship_Project\PCB\runs\detect\res"),
-                        help='结果保存文件夹')
-    parser.add_argument('--imgsz_det', type=tuple, default=(640, 640), help='Image input size')
-    parser.add_argument('--classes', type=list,
-                        default=['missing_hole', 'mouse_bite', 'open_circuit', 'short', 'spur', 'spurious_copper'],
-                        help='类别')
+    parser.add_argument(
+        "--det_model",
+        type=str,
+        default=r"E:\Communication_Innovation_and_Entrepreneurship_Project\PCB\runs\detect\train\weights\best.onnx",
+        help="Path to ONNX model",
+    )
+    parser.add_argument(
+        "--source",
+        type=str,
+        default=r"E:\Communication_Innovation_and_Entrepreneurship_Project\PCB\PCB_DATASET_YOLO\images\val2017",
+        help="Path to input image",
+    )
+    parser.add_argument(
+        "--out_path",
+        type=str,
+        default=r"E:\Communication_Innovation_and_Entrepreneurship_Project\PCB\runs\detect\res",
+        help="结果保存文件夹",
+    )
+    parser.add_argument("--imgsz_det", type=tuple, default=(640, 640), help="Image input size")
+    parser.add_argument(
+        "--classes",
+        type=list,
+        default=["missing_hole", "mouse_bite", "open_circuit", "short", "spur", "spurious_copper"],
+        help="类别",
+    )
 
-    parser.add_argument('--conf', type=float, default=0.25, help='Confidence threshold')
-    parser.add_argument('--iou', type=float, default=0.6, help='NMS IoU threshold')
+    parser.add_argument("--conf", type=float, default=0.25, help="Confidence threshold")
+    parser.add_argument("--iou", type=float, default=0.6, help="NMS IoU threshold")
     args = parser.parse_args()
 
     if not os.path.exists(args.out_path):
         os.mkdir(args.out_path)
-    print('开始运行：')
+    print("开始运行：")
     # Build model
     det_model = YOLOv11(args.det_model, args.imgsz_det)
     color_palette = np.random.uniform(0, 255, size=(len(args.classes), 3))  # 为每个类别生成调色板
@@ -189,15 +201,28 @@ if __name__ == '__main__':
             # 检测Inference
             boxes, (pre_time, det_time, post_time) = det_model(img, conf_threshold=args.conf, iou_threshold=args.iou)
             print(
-                '{}/{} ==>总耗时间: {:.3f}s, 其中, 预处理: {:.3f}s, 推理: {:.3f}s, 后处理: {:.3f}s, 识别{}个目标'.format(
-                    i + 1, len(os.listdir(args.source)), time.time() - start_time, pre_time, det_time, post_time,
-                    len(boxes)))
+                f"{i + 1}/{len(os.listdir(args.source))} ==>总耗时间: {time.time() - start_time:.3f}s, 其中, 预处理: {pre_time:.3f}s, 推理: {det_time:.3f}s, 后处理: {post_time:.3f}s, 识别{len(boxes)}个目标"
+            )
 
-            for (*box, conf, cls_) in boxes:
-                cv2.rectangle(img, (int(box[0]), int(box[1])), (int(box[2]), int(box[3])),
-                              color_palette[int(cls_)], 2, cv2.LINE_AA)
-                cv2.putText(img, f'{args.classes[int(cls_)]}: {conf:.3f}', (int(box[0]), int(box[1] - 9)),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+            for *box, conf, cls_ in boxes:
+                cv2.rectangle(
+                    img,
+                    (int(box[0]), int(box[1])),
+                    (int(box[2]), int(box[3])),
+                    color_palette[int(cls_)],
+                    2,
+                    cv2.LINE_AA,
+                )
+                cv2.putText(
+                    img,
+                    f"{args.classes[int(cls_)]}: {conf:.3f}",
+                    (int(box[0]), int(box[1] - 9)),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (0, 0, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
             cv2.imwrite(os.path.join(args.out_path, img_name), img)
 
         except Exception as e:
